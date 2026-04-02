@@ -1,0 +1,56 @@
+---
+title: "Grafikon iz Excela"
+format: docx
+execute:
+  echo: false
+---
+
+```{python}
+import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
+
+file = "Grafikoni.xlsx"
+
+df = pd.read_excel(
+    file,
+    sheet_name="grafCone",
+    usecols="A:E"
+)
+
+df = df.dropna(subset=["TestIme"])
+
+# %
+df["Skupaj"] = df["Zdravo"] + df["Mejno"] + df["Tvegano"]
+
+df["Zdravo_pct"] = df["Zdravo"] / df["Skupaj"] * 100
+df["Mejno_pct"] = df["Mejno"] / df["Skupaj"] * 100
+df["Tvegano_pct"] = df["Tvegano"] / df["Skupaj"] * 100
+
+x = np.arange(len(df))
+width = 0.6  
+
+plt.figure(figsize=(16, 6))
+
+plt.bar(x, df["Zdravo_pct"], width=width, label="Zdravo")
+plt.bar(x, df["Mejno_pct"], width=width,
+        bottom=df["Zdravo_pct"], label="Mejno")
+plt.bar(x, df["Tvegano_pct"], width=width,
+        bottom=df["Zdravo_pct"] + df["Mejno_pct"],
+        label="Tvegano")
+
+plt.xticks(x, df["TestIme"], rotation=45, ha='right')
+
+plt.ylabel("Procent (%)")
+plt.ylim(0, 100)
+
+
+plt.legend(
+    loc="upper center",
+    bbox_to_anchor=(0.5, 1.15),
+    ncol=3
+)
+
+plt.tight_layout()
+plt.show()
+```
